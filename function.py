@@ -1,7 +1,10 @@
 import requests
 from bs4 import BeautifulSoup
 import random
-
+import sqlite3
+import os
+import psycopg2
+from config import db_url
 
 def getPCS(usertext):
     content = ''
@@ -105,4 +108,41 @@ def getHelper():
             ,'高雄市政府運動發展局'
             ,'高雄市政府青年局']
     return '這個我們請' + place[random.randrange(0,len(place))] +'局長發言，謝謝'
-    
+
+def writeDB(usertext):
+    content = 'learn'
+    insdata = str(usertext).split('@')
+    if len(insdata) != 3 or insdata[0]!='市長學':
+        content = '你到底想讓我學什麼呢'
+    else:
+        #DATABASE_URL = os.popen('heroku config:get DATABASE_URL -a ericlinebot02').read()[:-1]
+        #conn = sqlite3.connect('DB.db')
+        conn = psycopg2.connect(db_url, sslmode='require')
+        sql_command = f"insert into kfish values ('{insdata[1]}','{insdata[2]}','None')"
+        cursor = conn.cursor()
+        cursor.execute(sql_command)
+        content = f'謝謝這位同學，市長學到了 {insdata[1]} : {insdata[2]}'
+        conn.commit()
+        cursor.close()
+        conn.close()
+    return content
+
+def getDB(usertext):
+    insdata = str(usertext).split(' ')
+    content = 'xxx'
+    if len(insdata) == 2 and insdata[0]=='市長':
+        #DATABASE_URL = os.popen('heroku config:get DATABASE_URL -a ericlinebot02').read()[:-1]
+        #conn = sqlite3.connect('DB.db')
+        conn = psycopg2.connect(db_url, sslmode='require')
+        cursor = conn.cursor()
+        cursor.execute(f"select answer from kfish where question = '{insdata[1]}'")
+        reply = cursor.fetchall()
+        if len(reply):
+            content = reply[random.randrange(0,len(reply))][0] 
+        else:
+            content = getHelper()
+        cursor.close()
+        conn.close()
+
+    return content
+
