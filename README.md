@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 關鍵字
 
 + 市長 
@@ -19,7 +18,7 @@ example:
 市長 新聞
 ```
 
-+ 備註:bbc似乎改了網頁所以不能用，但另一個神祕功能還可以 
++ 備註:bbc似乎改了網頁所以不能用，但另一個功能還可以 
 
 # 學習
 format
@@ -40,7 +39,6 @@ example:
 ```
 line_token = [你的token]
 line_secret = [你的secret]
+db_url = [postgresql link]
 ```
 3. 丟到heroku
-
->>>>>>> 9e0e98161fd4f0352ee6e812fc24df828dce2e23
